@@ -1,4 +1,4 @@
-export const BASE_URL = "https://prep-zen-ai.vercel.app/";
+export const BASE_URL = "https://prep-zen-ai.vercel.app/" || "http://localhost:8008";
 
 // API paths
 export const API_PATHS = {
