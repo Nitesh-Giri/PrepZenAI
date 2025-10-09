@@ -3,14 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const connectedDB = require("./config/db");
-
 const authRoutes = require("./routes/authRoute");
 const sessionRoutes = require("./routes/sessionRoute");
 const questionRoutes = require("./routes/questionRoute");
 const { protect } = require("./middlewares/authMiddleware");
 const { generateInterviewQuestions, generateConceptExplanation } = require("./controllers/aiController");
 const app = express();
-
 
 const PORT = process.env.PORT || 5005;
 
