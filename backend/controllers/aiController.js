@@ -39,6 +39,9 @@ const generateInterviewQuestions = async (req, res) => {
 
 //Generate Concept Explanation
 const generateConceptExplanation = async (req, res) => {
+  const MAX_RETRIES = 3;   // retry up to 3 times
+  const RETRY_DELAY = 1500; // ms
+
   try {
     const { question } = req.body;
 
@@ -48,25 +51,47 @@ const generateConceptExplanation = async (req, res) => {
 
     const prompt = conceptExplainPrompt(question);
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-lite",
-      contents: prompt,
-    });
+    // Retry wrapper
+    const callAI = async (retriesLeft = MAX_RETRIES) => {
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-2.0-flash-lite",
+          contents: prompt,
+        });
 
-    let rawText = response.text;
+        let rawText = response.text;
 
-    const cleanedText = rawText
-      .replace(/^```json\s*/, "")
-      .replace(/```$/, "")
-      .trim();
+        const cleanedText = rawText
+          .replace(/^```json\s*/, "")
+          .replace(/```$/, "")
+          .trim();
 
-    const data = JSON.parse(cleanedText);
+        return JSON.parse(cleanedText);
+      } catch (error) {
+        // Handle overloaded model (503)
+        if (error.status === 503 && retriesLeft > 0) {
+          console.warn(`Model overloaded, retrying in ${RETRY_DELAY}ms...`);
+          await new Promise((r) => setTimeout(r, RETRY_DELAY));
+          return callAI(retriesLeft - 1);
+        }
+        throw error; // Other errors or retries exhausted
+      }
+    };
+
+    const data = await callAI();
     res.status(200).json(data);
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("AI Error:", error);
+    // Provide a friendly message for overload or parsing errors
+    const message =
+      error.status === 503
+        ? "AI model is currently overloaded. Please try again later."
+        : "Failed to generate explanation. Please try again.";
+    res.status(500).json({ message, error: error.message });
   }
 };
+
 
 module.exports = {
     generateInterviewQuestions,
