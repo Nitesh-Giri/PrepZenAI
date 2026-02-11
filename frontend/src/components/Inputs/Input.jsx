@@ -9,8 +9,8 @@ function Input({value, onChange, lable, placeholder, type}) {
     };
   return (
     <div>
-        <lable className="text-[13px] text-slate-800">{lable}</lable>
-
+        <label className="text-[13px] text-slate-800">{lable}</label>
+        
         <div className="input-box">
             <input
                 type={

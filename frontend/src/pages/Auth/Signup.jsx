@@ -119,6 +119,7 @@ function Signup({setCurrentPage}) {
         <p className="text-[13px] text-slate-600 mt-3">
           Already have an account?{" "}
           <button
+            type="button"
             className="font-medium text-amber-600 underline cursor-pointer"
             onClick={() => {
               setCurrentPage('login');

@@ -73,8 +73,6 @@ function PrepZen() {
         API_PATHS.QUESTION.PIN(questionId)
       );
 
-      console.log(response);
-
       if( response.data && response.data.question){
         fetchSessionDetailsById();
       }

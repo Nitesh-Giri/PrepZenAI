@@ -4,8 +4,9 @@ import { BASE_URL } from "./apiPaths";
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 30000,
+    // Do not set a global Content-Type so axios can set the proper
+    // Content-Type for FormData requests (including boundary).
     headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
     },
 });
