@@ -1,6 +1,6 @@
 // Use Vite env var when available (for local dev), otherwise default to backend port
 // Backend listens on port 5005 by default (see backend/index.js)
-export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5005";
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8008";
 
 // API paths
 export const API_PATHS = {
