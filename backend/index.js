@@ -14,9 +14,29 @@ const PORT = process.env.PORT || 5005;
 
 app.use(
     cors({
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        origin: function (origin, callback) {
+            // Allowed origins from environment variable or defaults
+            const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map(o => o.trim()).filter(Boolean);
+            
+            if (!allowedOrigins.length) {
+                // Fallback if env var not set
+                allowedOrigins.push(
+                    "https://prepzenai.vercel.app",
+                    "https://prepzenai.vercel.app/",
+                    "http://localhost:5173",
+                    "http://localhost:8008"
+                );
+            }
+            
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
     })
 );
 
